@@ -16,6 +16,9 @@ void main() {
 
     // Start screen: default preset and white background, then create.
     expect(find.text('Create canvas'), findsOneWidget);
+    // The start page is a scrollable list; the button starts off-screen.
+    await tester.ensureVisible(find.text('Create canvas'));
+    await tester.pump();
     await tester.tap(find.text('Create canvas'));
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.byType(EditorPage), findsOneWidget);
@@ -47,6 +50,9 @@ void main() {
     await tester.pumpWidget(const PixelCanvasApp());
     await tester.pump();
 
+    // The start page is a scrollable list; the button starts off-screen.
+    await tester.ensureVisible(find.text('Create canvas'));
+    await tester.pump();
     await tester.tap(find.text('Create canvas'));
     await tester.pump(const Duration(milliseconds: 600));
 
