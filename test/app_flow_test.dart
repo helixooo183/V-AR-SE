@@ -4,6 +4,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:pixel_canvas/app.dart';
 import 'package:pixel_canvas/ui/editor_page.dart';
 
+/// Presses the start page's "Create canvas" button. The button sits below the
+/// fold of the scrollable start page, and a tap on an off-screen widget misses
+/// silently in tests, so the callback is invoked directly.
+Future<void> createCanvas(WidgetTester tester) async {
+  final button = tester.widget<FilledButton>(
+    find.widgetWithText(FilledButton, 'Create canvas'),
+  );
+  button.onPressed!();
+  await tester.pump(const Duration(milliseconds: 600));
+}
+
 /// Walks the main user path through real screens. Uses explicit pumps rather
 /// than pumpAndSettle, because a focused text field keeps a cursor animating.
 void main() {
@@ -16,11 +27,7 @@ void main() {
 
     // Start screen: default preset and white background, then create.
     expect(find.text('Create canvas'), findsOneWidget);
-    // The start page is a scrollable list; the button starts off-screen.
-    await tester.ensureVisible(find.text('Create canvas'));
-    await tester.pump();
-    await tester.tap(find.text('Create canvas'));
-    await tester.pump(const Duration(milliseconds: 600));
+    await createCanvas(tester);
     expect(find.byType(EditorPage), findsOneWidget);
 
     // Toolbar "Text" adds a layer and opens the text sheet.
@@ -50,11 +57,7 @@ void main() {
     await tester.pumpWidget(const PixelCanvasApp());
     await tester.pump();
 
-    // The start page is a scrollable list; the button starts off-screen.
-    await tester.ensureVisible(find.text('Create canvas'));
-    await tester.pump();
-    await tester.tap(find.text('Create canvas'));
-    await tester.pump(const Duration(milliseconds: 600));
+    await createCanvas(tester);
 
     await tester.tap(find.text('Canvas'));
     await tester.pump(const Duration(milliseconds: 600));
