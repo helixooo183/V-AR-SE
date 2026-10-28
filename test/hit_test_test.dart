@@ -98,7 +98,7 @@ void main() {
         visible: false,
         locked: false,
         path: 'x',
-        size: const Size(200, 100),
+        size: Size(200, 100),
       );
       expect(topLayerAt([back, front], Offset(100, 100))?.id, 'back');
     });
