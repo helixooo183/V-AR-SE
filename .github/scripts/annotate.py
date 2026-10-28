@@ -81,11 +81,31 @@ def annotate_tests(path: str) -> int:
     return failures
 
 
+def summarise_tests(path: str) -> None:
+    passed = failed = 0
+    with open(path, encoding="utf-8", errors="replace") as handle:
+        for raw in handle:
+            raw = raw.strip()
+            if not raw.startswith("{"):
+                continue
+            try:
+                event = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+            if event.get("type") == "testDone" and not event.get("hidden"):
+                if event.get("result") == "success":
+                    passed += 1
+                else:
+                    failed += 1
+    print(f"::notice title=test summary::{passed} passed, {failed} failed")
+
+
 if __name__ == "__main__":
     mode, target = sys.argv[1], sys.argv[2]
     if mode == "analyze":
         annotate_analyze(target)
     elif mode == "test":
         annotate_tests(target)
+        summarise_tests(target)
     else:
         raise SystemExit(f"unknown mode {mode}")

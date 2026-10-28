@@ -1,5 +1,5 @@
 import 'dart:math' as math;
-import 'dart:ui' show Offset, Size;
+import 'dart:ui' show Color, Offset, Size;
 
 import 'package:flutter/foundation.dart' show ChangeNotifier;
 
@@ -165,8 +165,7 @@ class EditorController extends ChangeNotifier {
   String addText({String text = 'Your text', TextStyleSpec? style}) {
     final doc = _document;
     final id = _nextId();
-    final spec =
-        style ?? TextStyleSpec(fontSize: (doc.shortSide * 0.09).roundToDouble());
+    final spec = style ?? _defaultTextStyle(doc);
     _selectedId = id;
     _apply(
       doc.copyWith(
@@ -189,6 +188,31 @@ class EditorController extends ChangeNotifier {
       ),
     );
     return id;
+  }
+
+  /// New text should be visible on first sight: dark on light backgrounds,
+  /// light on dark ones. Photo backgrounds get a shadow instead, since their
+  /// brightness varies across the image.
+  TextStyleSpec _defaultTextStyle(CanvasDocument doc) {
+    final fontSize = (doc.shortSide * 0.09).roundToDouble();
+    const dark = Color(0xFF111111);
+    const light = Color(0xFFFFFFFF);
+    return switch (doc.background) {
+      SolidBackground(:final color) => TextStyleSpec(
+          fontSize: fontSize,
+          color: color.computeLuminance() > 0.5 ? dark : light,
+        ),
+      GradientBackground(:final start) => TextStyleSpec(
+          fontSize: fontSize,
+          color: start.computeLuminance() > 0.5 ? dark : light,
+        ),
+      TransparentBackground() => TextStyleSpec(fontSize: fontSize, color: dark),
+      ImageBackground() => TextStyleSpec(
+          fontSize: fontSize,
+          color: light,
+          hasShadow: true,
+        ),
+    };
   }
 
   /// Adds an image layer, scaled down to fit inside the canvas if needed.

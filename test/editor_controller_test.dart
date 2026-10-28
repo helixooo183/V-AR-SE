@@ -141,6 +141,41 @@ void main() {
     });
   });
 
+  group('defaults', () {
+    test('new text contrasts with a light background', () {
+      final c = EditorController(document: _blankDocument());
+      final id = c.addText();
+      final style = (c.document.findLayer(id)! as TextLayer).style;
+      expect(style.color.computeLuminance(), lessThan(0.5));
+    });
+
+    test('new text contrasts with a dark background', () {
+      final c = EditorController(
+        document: const CanvasDocument(
+          width: 1080,
+          height: 1080,
+          background: SolidBackground(Color(0xFF101010)),
+        ),
+      );
+      final id = c.addText();
+      final style = (c.document.findLayer(id)! as TextLayer).style;
+      expect(style.color.computeLuminance(), greaterThan(0.5));
+    });
+
+    test('new text on a photo background gets a shadow', () {
+      final c = EditorController(
+        document: const CanvasDocument(
+          width: 1080,
+          height: 1080,
+          background: ImageBackground('/tmp/photo.jpg'),
+        ),
+      );
+      final id = c.addText();
+      final style = (c.document.findLayer(id)! as TextLayer).style;
+      expect(style.hasShadow, isTrue);
+    });
+  });
+
   group('editing', () {
     test('deleting the selected layer clears the selection', () {
       final c = EditorController(document: _blankDocument());

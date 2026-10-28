@@ -1,4 +1,6 @@
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pixel_canvas/model/canvas_background.dart';
@@ -121,6 +123,47 @@ void main() {
     final after = controller.document.findLayer(id)!.transform.scale;
     expect(after, greaterThan(before * 1.5));
     expect(after, lessThan(before * 20));
+  });
+
+  testWidgets('two-finger rotation turns the layer clockwise', (tester) async {
+    final controller = _controllerWith();
+    final id = controller.addText(text: 'Turn');
+    await _pumpStage(tester, controller);
+
+    final rect = _canvasRect(tester);
+    final scale = rect.width / controller.document.width;
+    final centre = rect.topLeft +
+        controller.document.findLayer(id)!.transform.position * scale;
+
+    await tester.tapAt(centre);
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(controller.document.findLayer(id)!.transform.rotation, 0);
+
+    // Two fingers, 40px apart on the x-axis, rotating a quarter turn
+    // clockwise on screen (the second finger moves from +x towards +y).
+    const radius = 20.0;
+    Offset fingerAt(double angle, double side) {
+      final x = side * radius * math.cos(angle);
+      final y = side * radius * math.sin(angle);
+      return centre + Offset(x, y);
+    }
+
+    final f1 = await tester.startGesture(fingerAt(0, -1), pointer: 1);
+    final f2 = await tester.startGesture(fingerAt(0, 1), pointer: 2);
+    await tester.pump();
+    for (var step = 1; step <= 10; step++) {
+      final angle = (math.pi / 2) * step / 10;
+      await f1.moveTo(fingerAt(angle, -1));
+      await f2.moveTo(fingerAt(angle, 1));
+      await tester.pump();
+    }
+    await f1.up();
+    await f2.up();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    final rotation = controller.document.findLayer(id)!.transform.rotation;
+    expect(rotation, greaterThan(1.0));
+    expect(rotation, lessThan(1.9));
   });
 
   testWidgets('a full mix of layer types renders without errors', (tester) async {
