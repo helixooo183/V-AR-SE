@@ -47,15 +47,32 @@ jobs:
         run: flutter pub get
 
       - name: Analyze
-        run: flutter analyze
+        shell: bash
+        run: |
+          set +e
+          flutter analyze > analyze.txt 2>&1
+          code=$?
+          cat analyze.txt
+          python3 .github/scripts/annotate.py analyze analyze.txt
+          exit $code
 
       - name: Test
-        run: flutter test
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          flutter test --reporter json > test.json 2> test.err
+          code=$?
+          cat test.err
+          python3 .github/scripts/annotate.py test test.json
+          exit $code
 
       - name: Build release APK
+        if: always()
         run: flutter build apk --release
 
       - name: Upload APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: pixel-canvas-apk
