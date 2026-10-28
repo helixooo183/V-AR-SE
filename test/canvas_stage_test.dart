@@ -139,22 +139,24 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     expect(controller.document.findLayer(id)!.transform.rotation, 0);
 
-    // Two fingers, 40px apart on the x-axis, rotating a quarter turn
-    // clockwise on screen (the second finger moves from +x towards +y).
-    const radius = 20.0;
-    Offset fingerAt(double angle, double side) {
+    // Two fingers 120px apart, turning a quarter turn clockwise on screen.
+    // Real fingers also drift apart while turning, and Flutter only starts a
+    // scale or rotate gesture once the span, focal point or scale changes
+    // past its slop. So the fingers spread from 60px to 80px from the centre.
+    Offset fingerAt(double angle, double side, double radius) {
       final x = side * radius * math.cos(angle);
       final y = side * radius * math.sin(angle);
       return centre + Offset(x, y);
     }
 
-    final f1 = await tester.startGesture(fingerAt(0, -1), pointer: 1);
-    final f2 = await tester.startGesture(fingerAt(0, 1), pointer: 2);
+    final f1 = await tester.startGesture(fingerAt(0, -1, 60), pointer: 1);
+    final f2 = await tester.startGesture(fingerAt(0, 1, 60), pointer: 2);
     await tester.pump();
     for (var step = 1; step <= 10; step++) {
       final angle = (math.pi / 2) * step / 10;
-      await f1.moveTo(fingerAt(angle, -1));
-      await f2.moveTo(fingerAt(angle, 1));
+      final radius = 60 + 20 * step / 10;
+      await f1.moveTo(fingerAt(angle, -1, radius));
+      await f2.moveTo(fingerAt(angle, 1, radius));
       await tester.pump();
     }
     await f1.up();

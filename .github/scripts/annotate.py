@@ -49,6 +49,7 @@ def annotate_tests(path: str) -> int:
     files: dict[int, str] = {}
     lines: dict[int, int] = {}
     failures = 0
+    printed: list[str] = []
     with open(path, encoding="utf-8", errors="replace") as handle:
         for raw in handle:
             raw = raw.strip()
@@ -59,6 +60,9 @@ def annotate_tests(path: str) -> int:
             except json.JSONDecodeError:
                 continue
             kind = event.get("type")
+            if kind == "print":
+                printed.append(str(event.get("message", "")))
+                continue
             if kind == "testStart":
                 test = event.get("test", {})
                 tid = test.get("id")
@@ -77,6 +81,11 @@ def annotate_tests(path: str) -> int:
                     f"{escape(names.get(tid, '?'))}: {escape(str(event.get('error', ''))[:1500])}"
                     f"%0A{escape(str(event.get('stackTrace', ''))[:1500])}"
                 )
+    if failures and printed:
+        # Framework failure dumps (expected/actual values) arrive as print
+        # events. Attach the tail so the cause is visible without the raw log.
+        tail = "\n".join(printed)[-3000:]
+        print(f"::error title=test output::{escape(tail)}")
     print(f"Annotated {failures} test failure(s).")
     return failures
 
