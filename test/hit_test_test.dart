@@ -90,10 +90,10 @@ void main() {
 
     test('skips hidden layers', () {
       final back = _image(id: 'back', position: const Offset(100, 100));
-      final front = ImageLayer(
+      const front = ImageLayer(
         id: 'front',
         name: 'front',
-        transform: const LayerTransform(position: Offset(100, 100)),
+        transform: LayerTransform(position: Offset(100, 100)),
         opacity: 1,
         visible: false,
         locked: false,

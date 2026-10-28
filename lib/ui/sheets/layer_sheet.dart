@@ -63,13 +63,10 @@ class LayerSheet extends StatelessWidget {
                     : ReorderableListView.builder(
                         buildDefaultDragHandles: false,
                         itemCount: displayed.length,
-                        onReorder: (oldIndex, newIndex) {
-                          // ReorderableListView reports the index before the
-                          // item is removed when dragging downwards.
-                          var target = newIndex;
-                          if (target > oldIndex) target -= 1;
+                        // newIndex is already adjusted for the removed item.
+                        onReorderItem: (oldIndex, newIndex) {
                           final n = displayed.length;
-                          controller.moveLayer(n - 1 - oldIndex, n - 1 - target);
+                          controller.moveLayer(n - 1 - oldIndex, n - 1 - newIndex);
                         },
                         itemBuilder: (context, index) {
                           final layer = displayed[index];

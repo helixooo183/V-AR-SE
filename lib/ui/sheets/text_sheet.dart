@@ -1,5 +1,3 @@
-import 'dart:ui' show Color, TextAlign;
-
 import 'package:flutter/material.dart';
 
 import '../../model/editor_layer.dart';

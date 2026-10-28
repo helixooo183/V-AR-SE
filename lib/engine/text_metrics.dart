@@ -1,5 +1,3 @@
-import 'dart:ui' show Size;
-
 import 'package:flutter/painting.dart';
 
 import '../model/editor_layer.dart';

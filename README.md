@@ -55,7 +55,7 @@ export therefore agree exactly, and text looks the same at every zoom.
 
 ## Running it
 
-Requirements: Flutter stable (3.27 or newer), JDK 17, Android SDK.
+Requirements: Flutter stable 3.41 or newer, JDK 17, Android SDK.
 
 ```bash
 flutter create --platforms=android --org com.helixooo183 --project-name pixel_canvas .

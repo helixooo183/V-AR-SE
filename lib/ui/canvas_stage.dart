@@ -258,7 +258,7 @@ class _CanvasStageState extends State<CanvasStage> {
   Matrix4 _placementMatrix(LayerTransform t) {
     return Matrix4.identity()
       ..rotateZ(t.rotation)
-      ..scale(t.scale);
+      ..scaleByDouble(t.scale, t.scale, 1.0, 1.0);
   }
 
   /// Must be a direct child of the Stack, so it is returned as [Positioned].

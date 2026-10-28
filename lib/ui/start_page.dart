@@ -58,8 +58,8 @@ class _StartPageState extends State<StartPage> {
     var (width, height) = _currentSize();
 
     if (_preset == CanvasPreset.custom) {
-      final min = CanvasDocument.minSide;
-      final max = CanvasDocument.maxSide;
+      const min = CanvasDocument.minSide;
+      const max = CanvasDocument.maxSide;
       final outOfRange = width < min || width > max || height < min || height > max;
       if (outOfRange) {
         setState(() {
