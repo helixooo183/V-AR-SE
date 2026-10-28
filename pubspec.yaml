@@ -1,0 +1,62 @@
+name: pixel_canvas
+description: Layer-based graphic editor for text, images, stickers and backgrounds.
+publish_to: "none"
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  image_picker: ^1.2.0
+  gal: ^2.3.3
+  path_provider: ^2.1.6
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  # Bundled OFL fonts for text layers. Licence texts live in assets/fonts/licenses/.
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter_400Regular.ttf
+        - asset: assets/fonts/Inter_700Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Inter_400Regular_Italic.ttf
+          style: italic
+    - family: PlayfairDisplay
+      fonts:
+        - asset: assets/fonts/PlayfairDisplay_400Regular.ttf
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/Oswald_400Regular.ttf
+    - family: Anton
+      fonts:
+        - asset: assets/fonts/Anton_400Regular.ttf
+    - family: BebasNeue
+      fonts:
+        - asset: assets/fonts/BebasNeue_400Regular.ttf
+    - family: Bangers
+      fonts:
+        - asset: assets/fonts/Bangers_400Regular.ttf
+    - family: Righteous
+      fonts:
+        - asset: assets/fonts/Righteous_400Regular.ttf
+    - family: PermanentMarker
+      fonts:
+        - asset: assets/fonts/PermanentMarker_400Regular.ttf
+    - family: DancingScript
+      fonts:
+        - asset: assets/fonts/DancingScript_400Regular.ttf
+    - family: Lobster
+      fonts:
+        - asset: assets/fonts/Lobster_400Regular.ttf
+    - family: Pacifico
+      fonts:
+        - asset: assets/fonts/Pacifico_400Regular.ttf
