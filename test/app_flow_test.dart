@@ -2,7 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pixel_canvas/app.dart';
+import 'package:pixel_canvas/model/canvas_document.dart';
+import 'package:pixel_canvas/model/canvas_background.dart';
 import 'package:pixel_canvas/ui/editor_page.dart';
+import 'package:pixel_canvas/ui/theme.dart';
 
 /// Presses the start page's "Create canvas" button. The button sits below the
 /// fold of the scrollable start page, and a tap on an off-screen widget misses
@@ -23,6 +26,8 @@ Future<void> createCanvas(WidgetTester tester) async {
   // DIAG: temporary, to see why navigation does not reach the editor.
   debugPrint('DIAG canPop=${nav.canPop()} pages=${find.byType(MaterialPageRoute).evaluate().length} texts=$texts');
   debugPrint('DIAG exceptionless=${tester.takeException()}');
+  await tester.pump(const Duration(seconds: 1));
+  debugPrint('DIAG scaffolds=${find.byType(Scaffold).evaluate().length} editors=${find.byType(EditorPage).evaluate().length} onstage=${find.byType(Scaffold, skipOffstage: true).evaluate().length}');
 }
 
 /// Walks the main user path through real screens. Uses explicit pumps rather
@@ -76,6 +81,34 @@ void main() {
     await tester.tap(find.text('16:9'));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('1920 × 1080 px'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('editor opens directly and adds text', (tester) async {
+    await tester.binding.setSurfaceSize(const Size(400, 800));
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildAppTheme(),
+        home: EditorPage(
+          document: const CanvasDocument(
+            width: 1080,
+            height: 1080,
+            background: SolidBackground(Color(0xFFFFFFFF)),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('Text'), findsOneWidget);
+
+    await tester.tap(find.text('Text'));
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.byType(TextField), findsOneWidget);
+    await tester.enterText(find.byType(TextField), 'Direct edit');
+    await tester.pump();
+    await tester.tapAt(const Offset(10, 10));
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.text('Direct edit'), findsWidgets);
     expect(tester.takeException(), isNull);
   });
 }
