@@ -13,6 +13,16 @@ Future<void> createCanvas(WidgetTester tester) async {
   );
   button.onPressed!();
   await tester.pump(const Duration(milliseconds: 600));
+  final nav = tester.state<NavigatorState>(find.byType(Navigator).first);
+  final texts = find
+      .byType(Text)
+      .evaluate()
+      .map((e) => (e.widget as Text).data)
+      .take(30)
+      .toList();
+  // DIAG: temporary, to see why navigation does not reach the editor.
+  debugPrint('DIAG canPop=${nav.canPop()} pages=${find.byType(MaterialPageRoute).evaluate().length} texts=$texts');
+  debugPrint('DIAG exceptionless=${tester.takeException()}');
 }
 
 /// Walks the main user path through real screens. Uses explicit pumps rather
