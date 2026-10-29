@@ -83,7 +83,7 @@ void main() {
       MaterialApp(
         theme: buildAppTheme(),
         home: const EditorPage(
-          document: const CanvasDocument(
+          document: CanvasDocument(
             width: 1080,
             height: 1080,
             background: SolidBackground(Color(0xFFFFFFFF)),
