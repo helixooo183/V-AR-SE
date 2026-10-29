@@ -9,25 +9,14 @@ import 'package:pixel_canvas/ui/theme.dart';
 
 /// Presses the start page's "Create canvas" button. The button sits below the
 /// fold of the scrollable start page, and a tap on an off-screen widget misses
-/// silently in tests, so the callback is invoked directly.
+/// silently in tests, so the callback is invoked directly. The route transition
+/// is allowed to finish before the editor is inspected.
 Future<void> createCanvas(WidgetTester tester) async {
   final button = tester.widget<FilledButton>(
     find.widgetWithText(FilledButton, 'Create canvas'),
   );
   button.onPressed!();
-  await tester.pump(const Duration(milliseconds: 600));
-  final nav = tester.state<NavigatorState>(find.byType(Navigator).first);
-  final texts = find
-      .byType(Text)
-      .evaluate()
-      .map((e) => (e.widget as Text).data)
-      .take(30)
-      .toList();
-  // DIAG: temporary, to see why navigation does not reach the editor.
-  debugPrint('DIAG canPop=${nav.canPop()} pages=${find.byType(MaterialPageRoute).evaluate().length} texts=$texts');
-  debugPrint('DIAG exceptionless=${tester.takeException()}');
-  await tester.pump(const Duration(seconds: 1));
-  debugPrint('DIAG scaffolds=${find.byType(Scaffold).evaluate().length} editors=${find.byType(EditorPage).evaluate().length} onstage=${find.byType(Scaffold, skipOffstage: true).evaluate().length}');
+  await tester.pumpAndSettle();
 }
 
 /// Walks the main user path through real screens. Uses explicit pumps rather
@@ -78,6 +67,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.text('16:9'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('16:9'));
+    await tester.pump();
     await tester.tap(find.text('16:9'));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('1920 × 1080 px'), findsOneWidget);
