@@ -82,7 +82,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: buildAppTheme(),
-        home: EditorPage(
+        home: const EditorPage(
           document: const CanvasDocument(
             width: 1080,
             height: 1080,
