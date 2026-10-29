@@ -58,7 +58,7 @@ export therefore agree exactly, and text looks the same at every zoom.
 Requirements: Flutter stable 3.41 or newer, JDK 17, Android SDK.
 
 ```bash
-flutter create --platforms=android --org com.helixooo183 --project-name pixel_canvas .
+flutter create --platforms=android --org com.viapixel --project-name pixel_canvas .
 flutter pub get
 flutter run
 ```
@@ -85,7 +85,7 @@ GitHub Actions runs analyze, tests and a release APK build on every push
   (`android:label="Pixel Canvas"`).
 - Create an upload key and configure `android/app/build.gradle` signing.
   Keep the keystore out of git (`.gitignore` already excludes `*.jks`).
-- Set a real `applicationId` (currently `com.helixooo183.pixel_canvas`).
+- Set a real `applicationId` (currently `com.viapixel.pixel_canvas`).
 
 ## Not built yet
 

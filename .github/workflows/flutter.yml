@@ -36,7 +36,7 @@ jobs:
       - name: Generate Android platform files
         run: |
           if [ ! -d android ]; then
-            flutter create --platforms=android --org com.helixooo183 --project-name pixel_canvas /tmp/scaffold
+            flutter create --platforms=android --org com.viapixel --project-name pixel_canvas /tmp/scaffold
             cp -r /tmp/scaffold/android ./android
           fi
 
